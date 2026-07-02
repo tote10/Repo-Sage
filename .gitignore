@@ -1,2 +1,4 @@
 *.md
 !READ.md
+.venv/
+requirements.txt
