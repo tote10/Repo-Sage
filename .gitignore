@@ -1,4 +1,7 @@
 *.md
-!READ.md
+!README.md
 .venv/
 requirements.txt
+__pycache__/
+.pytest_cache/
+.env
