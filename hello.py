@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from load_repo import load_repo
 from groq import Groq
 
 load_dotenv()
@@ -13,6 +14,7 @@ try:
 
         ],)
     print(response.choices[0].message.content)
+    print(response.usage)
     
 except Exception as e:
     print(f"Error: {e}")
