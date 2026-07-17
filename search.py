@@ -7,7 +7,7 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 chunks = embed_chunks(chunk_repo())
 def cosine_sim(a,b):
     return(np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b)))
-def search(query ,k=6):
+def search(query ,k=5):
     
     query_vec = model.encode(query)
     scored = []
@@ -16,5 +16,3 @@ def search(query ,k=6):
         scored.append((score, chunk))
     scored.sort(key=lambda x: x[0], reverse=True)
     return scored[:k]
-for score, chunk in search("login page"):
-      print(round(score, 3), chunk["file"])

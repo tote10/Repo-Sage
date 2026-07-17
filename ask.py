@@ -1,26 +1,26 @@
 from pathlib import Path
 from dotenv import load_dotenv
 from groq import Groq
+from search import search
 
 parts = []
 
-for path in Path(".").rglob("*.py"):
-    try:
-        code = path.read_text(encoding="utf-8")
-    except Exception:
-        continue
-        
-    header = f"# FILE: {path}\n"
-    parts.append(header + code)
-big_string = "\n\n".join(parts)
+question = "where does the chunks changed to vectors?"
+result = search(question , k=5)
+print("Retrieved chunks and scores:")
+for score, chunk in result:
+    print(f"{round(score, 3)} {chunk['file']}")
+print("---")
+context = ""
+for score, chunk in result:
+    context += f"File: {chunk['file']}(lines{chunk['start_line']}-{chunk['end_line']}):\n\n"
+    context += chunk['text'] + "\n\n"
 
-
-question = "what is this project?"
 prompt = f"""Here is a codebase. Answer using ONLY this code. Cite
   the file you used.
 
   CODE:
-  {big_string}
+  {context}
 
   QUESTION: {question}"""
 load_dotenv()
@@ -34,6 +34,6 @@ try:
     )
     print(response.choices[0].message.content)
     print(response.usage)
-    print(f"Total characters: {len(big_string):,}")
+    print(f"Total characters: {len(context):,}")
 except Exception as e:
     print(f"Error: {e}")

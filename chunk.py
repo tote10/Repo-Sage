@@ -2,8 +2,14 @@ from pathlib import Path
 
 def chunk_repo():
     chunks = []
-    for path in Path("sample_repo").rglob("*.py"):
-        text = path.read_text(encoding="utf-8")
+    skip_dirs = {".git", "__pycache__", ".venv", "venv", "env", "node_modules","sample_repo"}
+    for path in Path(".").rglob("*.py"): 
+        if any(skip in path.parts for skip in skip_dirs):
+            continue 
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
         start = 0
         overlap = 100
         while start < len(text):
