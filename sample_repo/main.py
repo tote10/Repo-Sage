@@ -16,7 +16,7 @@ Base.metadata.create_all(bind=engine)
 security = HTTPBearer()
 
 @app.middleware("http")
-async def log_requests(request, call_next):
+def log_requests(request, call_next):
     start_time = datetime.now()
     response = await call_next(request)
     process_time = (datetime.now() - start_time).total_seconds()
