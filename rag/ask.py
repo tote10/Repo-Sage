@@ -4,6 +4,11 @@ from groq import Groq
 from search import search
 
 parts = []
+def ask(question: str , k: int = 5)->dict:
+    result = search(question , k=k)
+    print("Retrieved chunks and scores:")
+    for score, chunk in result:
+        print(f"{round(score, 3)} {chunk['file']}")
 
 question = "where does the chunks changed to vectors?"
 result = search(question , k=5)
