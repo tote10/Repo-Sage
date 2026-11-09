@@ -15,7 +15,7 @@ def get_transformer_model(model_name: str = "all-MiniLM-L6-v2"):
     return _transformer_model if _transformer_model is not False else None
 
 def _simple_text_vector(text: str, dim: int = 64) -> List[float]:
-    """Fallback hash-based term vector when sentence_transformers is unavailable."""
+    """Fast fallback term frequency vector when sentence_transformers is unavailable."""
     vec = [0.0] * dim
     words = re.findall(r"\w+", text.lower())
     if not words:
@@ -28,10 +28,13 @@ def _simple_text_vector(text: str, dim: int = 64) -> List[float]:
         vec = [x / norm for x in vec]
     return vec
 
-def embed_chunks(chunks: List[Dict[str, Any]], model_name: str = "all-MiniLM-L6-v2") -> List[Dict[str, Any]]:
+def embed_chunks(chunks: List[Dict[str, Any]], model_name: str = "all-MiniLM-L6-v2", batch_size: int = 64) -> List[Dict[str, Any]]:
+    if not chunks:
+        return []
     model = get_transformer_model(model_name)
     if model is not None:
-        vectors = model.encode([chunk["text"] for chunk in chunks])
+        texts = [chunk["text"] for chunk in chunks]
+        vectors = model.encode(texts, batch_size=batch_size, show_progress_bar=False)
         for c, v in zip(chunks, vectors):
             c["embedding"] = v
     else:
