@@ -20,10 +20,17 @@ class CitationChunk(BaseModel):
     name: Optional[str] = None
     type: Optional[str] = None
 
+class SourceCitationItem(BaseModel):
+    file: str
+    line: Optional[int] = None
+    lines: Optional[str] = None
+
 class AskResponse(BaseModel):
     question: str
     answer: str
     citations: List[str]
+    sources: Optional[List[SourceCitationItem]] = None
+    confidence: Optional[float] = None
     chunks: Optional[List[CitationChunk]] = None
 
 class IndexRequest(BaseModel):
@@ -69,6 +76,8 @@ def ask_question(payload: AskRequest):
         question=result["question"],
         answer=result["answer"],
         citations=result["citations"],
+        sources=[SourceCitationItem(**s) for s in result.get("sources", [])] if result.get("sources") is not None else None,
+        confidence=result.get("confidence"),
         chunks=[CitationChunk(**c) for c in result.get("chunks", [])]
     )
 

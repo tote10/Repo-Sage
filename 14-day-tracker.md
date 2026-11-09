@@ -1,6 +1,6 @@
 # 14-Day Accelerated Plan for repo-sage (Revised & Detailed)
 
-You are currently on **Day 4**. The first 3 days (Foundations, Dumb Loop, Naive RAG) are marked as complete based on your codebase. Here is the *highly detailed* breakdown for every single day moving forward.
+You are currently on **Day 6**. The first 5 days (Foundations, Dumb Loop, Naive RAG, Smart chunking, Hybrid search) are marked as complete based on your codebase. Here is the *highly detailed* breakdown for every single day moving forward.
 
 ---
 
@@ -36,7 +36,7 @@ You are currently on **Day 4**. The first 3 days (Foundations, Dumb Loop, Naive 
 
 ---
 
-### [ ] Day 6: Tools & structured output
+### [X] Day 6: Tools & structured output
 **Focus Area:** Giving the LLM the ability to take actions instead of just talking.
 **The Struggle:** Forcing an unpredictable language model to output perfectly structured JSON that your Python code can parse and execute without crashing.
 **Details & Try It:**

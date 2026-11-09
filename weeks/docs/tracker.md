@@ -41,7 +41,7 @@ Each line is one day's job. Details for each day are in the matching `week-XX.md
 - [x] Day 5 — Lock in your default search setup
 
 ## Week 6 — Tools & structured output
-- [ ] Day 1 — Make Claude return clean JSON
+- [x] Day 1 — Make Claude return clean JSON
 - [ ] Day 2 — Give it a `read_file` tool
 - [ ] Day 3 — Add a `grep` tool (safely)
 - [ ] Day 4 — One full tool round-trip
