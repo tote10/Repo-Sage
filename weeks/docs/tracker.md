@@ -29,16 +29,16 @@ Each line is one day's job. Details for each day are in the matching `week-XX.md
 ## Week 4 — Smart chunking + real citations
 - [x] Day 1 — Read Python structure with `ast`
 - [x] Day 2 — Make each function/class its own chunk
-- [ ] Day 3 — Answers point to a real `file:line`
-- [ ] Day 4 — Compare dumb vs smart chunking
-- [ ] Day 5 — Make re-indexing clean and repeatable
+- [x] Day 3 — Answers point to a real `file:line`
+- [x] Day 4 — Compare dumb vs smart chunking
+- [x] Day 5 — Make re-indexing clean and repeatable
 
 ## Week 5 — Hybrid search + reranking
-- [ ] Day 1 — Add keyword search (exact names)
-- [ ] Day 2 — Combine keyword + meaning search
-- [ ] Day 3 — Rerank so the best chunk is #1
-- [ ] Day 4 — Test which setup answers best
-- [ ] Day 5 — Lock in your default search setup
+- [x] Day 1 — Add keyword search (exact names)
+- [x] Day 2 — Combine keyword + meaning search
+- [x] Day 3 — Rerank so the best chunk is #1
+- [x] Day 4 — Test which setup answers best
+- [x] Day 5 — Lock in your default search setup
 
 ## Week 6 — Tools & structured output
 - [ ] Day 1 — Make Claude return clean JSON

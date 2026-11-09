@@ -14,7 +14,7 @@ This document contains every detail and exact step needed to finish your current
 1. **Update the Prompt:** You need to explicitly demand a structured output format at the very end of the response. Update your `prompt` string in `ask.py` to look like this:
 
 ```python
-prompt = f"""You are a helpful coding assistant. Answer the QUESTION using ONLY the CODE context provided below. 
+prompt = f"""You are a helpful coding assistant. Answer the QUESTION using ONLY the CODE context provided below.
 
 CODE CONTEXT:
 {context}
@@ -59,7 +59,7 @@ if len(parts) > 1:
 **Detailed Steps:**
 1. Pick 5 questions (e.g., "Where are chunks changed to vectors?", "How does search work?", "What skips directories in chunking?").
 2. Run these questions against your current AST implementation. Note if the chunks returned actually contain the whole function needed to answer it.
-3. Compare it in your head to Week 3 (when a chunk was just 800 characters and might cut a function in half). 
+3. Compare it in your head to Week 3 (when a chunk was just 800 characters and might cut a function in half).
 4. **Done check:** Just verify that your AST chunks are pulling in coherent, complete Python functions.
 
 ---
@@ -72,13 +72,13 @@ if len(parts) > 1:
 
 **Detailed Steps:**
 1. Create or open your FastAPI routes file (`app/api/routes.py`).
-2. Add an `/index` POST route. 
+2. Add an `/index` POST route.
 3. Import your `chunk_repo` logic and vector embedding logic here.
 
 ```python
 from fastapi import APIRouter
 from rag.chunk import chunk_repo
-# from rag.embed import your_embed_function 
+# from rag.embed import your_embed_function
 # from rag.search import clear_index  # You will need a function to wipe the old index
 
 router = APIRouter()
@@ -87,14 +87,14 @@ router = APIRouter()
 def reindex_codebase():
     # 1. Clear the existing index to ensure IDEMPOTENCY
     # clear_index()  <- Implement a way to wipe your old vector data/DB
-    
+
     # 2. Extract new chunks
     chunks = chunk_repo()
-    
+
     # 3. Embed and store the chunks
     # for chunk in chunks:
     #     save_to_vector_db(chunk)
-    
+
     return {"status": "success", "chunks_indexed": len(chunks)}
 ```
 
