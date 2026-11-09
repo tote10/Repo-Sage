@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
 from dotenv import load_dotenv
-from rag.search import search
+from rag.hybrid import hybrid_search
 
 load_dotenv()
 
@@ -37,7 +37,8 @@ def parse_llm_response(raw_text: str) -> Tuple[str, List[str]]:
     return answer_text, citations
 
 def ask(question: str, k: int = 5, repo_path: Optional[str] = None) -> Dict[str, Any]:
-    results = search(question, k=k, repo_path=repo_path)
+    # Default to hybrid search (Vector + BM25 + Rerank)
+    results = hybrid_search(question, k=k, repo_path=repo_path)
     context_parts = []
     chunk_citations = []
 

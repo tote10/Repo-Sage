@@ -25,7 +25,7 @@ You are currently on **Day 4**. The first 3 days (Foundations, Dumb Loop, Naive 
 
 ---
 
-### [ ] Day 5: Hybrid search + reranking
+### [X] Day 5: Hybrid search + reranking
 **Focus Area:** Combining exact keyword search (BM25) with semantic search (Vector) and then re-ordering the results.
 **The Struggle:** Vector search finds concepts but fails at exact variable names (e.g., `user_id_x7`). BM25 finds exact words but misses concepts. Combining them requires normalizing scores.
 **Details & Try It:**
