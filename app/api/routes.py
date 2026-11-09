@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from app.core.config import settings
 from rag.ask import ask
-from rag.search import get_repo_index
+from rag.search import get_repo_index, clear_index
 
 class AskRequest(BaseModel):
     question: str = Field(min_length=1, description="Question about the repository")
@@ -27,12 +27,12 @@ class AskResponse(BaseModel):
     chunks: Optional[List[CitationChunk]] = None
 
 class IndexRequest(BaseModel):
-    repo_path: str = Field(description="Filesystem path of repository directory to index")
-    force_refresh: bool = Field(default=False, description="Whether to re-index even if already cached")
+    repo_path: Optional[str] = Field(default=None, description="Filesystem path of repository directory to index")
+    force_refresh: bool = Field(default=True, description="Whether to re-index and clear old cache")
 
 class IndexResponse(BaseModel):
     repo_path: str
-    chunks_count: int
+    chunks_indexed: int
     status: str
 
 router = APIRouter()
@@ -42,15 +42,22 @@ def root():
     return {"message": "repo-sage API is running", "version": settings.VERSION}
 
 @router.post("/index", response_model=IndexResponse)
-def index_repo(payload: IndexRequest):
-    target = Path(payload.repo_path)
+def reindex_codebase(payload: Optional[IndexRequest] = None):
+    target_path = payload.repo_path if payload and payload.repo_path else str(settings.REPO_PATH)
+    target = Path(target_path)
     if not target.exists() or not target.is_dir():
-        raise HTTPException(status_code=400, detail=f"Invalid repository directory: {payload.repo_path}")
-    index = get_repo_index(str(target), force_refresh=payload.force_refresh)
+        raise HTTPException(status_code=400, detail=f"Invalid repository directory: {target_path}")
+
+    # 1. Clear existing index to ensure idempotency
+    clear_index(str(target))
+
+    # 2. Extract new chunks and rebuild index
+    index = get_repo_index(str(target), force_refresh=True)
+
     return IndexResponse(
         repo_path=str(target.resolve()),
-        chunks_count=len(index.chunks),
-        status="indexed"
+        chunks_indexed=len(index.chunks),
+        status="success"
     )
 
 @router.post("/ask", response_model=AskResponse)

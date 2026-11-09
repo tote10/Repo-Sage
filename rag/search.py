@@ -12,7 +12,12 @@ class RepoIndex:
         self.matrix: Optional[np.ndarray] = None
         self.build()
 
+    def clear(self) -> None:
+        self.chunks.clear()
+        self.matrix = None
+
     def build(self) -> None:
+        self.clear()
         raw_chunks = chunk_repo(self.repo_path)
         self.chunks = embed_chunks(raw_chunks)
         if self.chunks:
@@ -33,7 +38,6 @@ class RepoIndex:
             return []
         query_normed = query_vec / q_norm
 
-        # Matrix-vector dot product across all chunk vectors at once: O(N) vectorized
         scores = np.dot(self.matrix, query_normed)
         top_indices = np.argsort(scores)[::-1][:k]
 
@@ -42,9 +46,24 @@ class RepoIndex:
 # Global cache of repository indices
 _index_cache: Dict[str, RepoIndex] = {}
 
+def clear_index(repo_path: Optional[Union[str, Path]] = None) -> None:
+    """Wipes the cached vector index to ensure idempotent re-indexing."""
+    global _index_cache
+    if repo_path is not None:
+        resolved = str(Path(repo_path).resolve())
+        if resolved in _index_cache:
+            _index_cache[resolved].clear()
+            del _index_cache[resolved]
+    else:
+        for idx in _index_cache.values():
+            idx.clear()
+        _index_cache.clear()
+
 def get_repo_index(repo_path: Optional[Union[str, Path]] = None, force_refresh: bool = False) -> RepoIndex:
     resolved_path = str(Path(repo_path).resolve() if repo_path else Path("sample_repo").resolve())
     if force_refresh or resolved_path not in _index_cache:
+        if resolved_path in _index_cache:
+            _index_cache[resolved_path].clear()
         _index_cache[resolved_path] = RepoIndex(resolved_path)
     return _index_cache[resolved_path]
 

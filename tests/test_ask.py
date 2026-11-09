@@ -36,8 +36,8 @@ def test_index_repo_valid():
     response = client.post("/index", json=payload)
     assert response.status_code == 200
     data = response.json()
-    assert data["status"] == "indexed"
-    assert data["chunks_count"] > 0
+    assert data["status"] == "success"
+    assert data["chunks_indexed"] > 0
 
 def test_index_repo_invalid():
     payload = {"repo_path": "non_existent_folder_xyz"}
