@@ -1,5 +1,4 @@
-*.md
-!README.md
+
 .venv/
 requirements.txt
 __pycache__/
