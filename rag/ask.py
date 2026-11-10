@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
 from dotenv import load_dotenv
 from rag.hybrid import hybrid_search
+from rag.agent_turn import run_agent_round_trip, StructuredAnswer
 
 load_dotenv()
 
@@ -89,10 +90,23 @@ def ask(question: str, k: int = 5, repo_path: Optional[str] = None) -> Dict[str,
             answer_text = "I don't know."
             citations = []
 
+    # If the user question explicitly requests reading a file or grepping, or if tools mode is preferred
+    # we can also record sources structured
+    sources_structured = []
+    for c in chunk_citations:
+        sources_structured.append({
+            "file": c["file"],
+            "line": c["start_line"],
+            "end_line": c["end_line"],
+            "citation": c["citation"]
+        })
+
     return {
         "question": question,
         "answer": answer_text,
         "citations": citations,
+        "sources": sources_structured,
+        "confidence": 0.9 if citations else 0.5,
         "chunks": chunk_citations
     }
 
