@@ -42,7 +42,7 @@ Each line is one day's job. Details for each day are in the matching `week-XX.md
 
 ## Week 6 — Tools & structured output
 - [x] Day 1 — Make Claude return clean JSON
-- [ ] Day 2 — Give it a `read_file` tool
+- [x] Day 2 — Give it a `read_file` tool
 - [ ] Day 3 — Add a `grep` tool (safely)
 - [ ] Day 4 — One full tool round-trip
 - [ ] Day 5 — Improve the tools + log every call
