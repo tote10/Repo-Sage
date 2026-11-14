@@ -3,8 +3,11 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 from rag.tools import (
     READ_FILE_TOOL,
+    GREP_TOOL,
+    AVAILABLE_TOOLS,
     sandbox_path,
     read_file,
+    grep,
     execute_tool_call,
     request_tool_call
 )
@@ -92,3 +95,57 @@ def test_request_tool_call_mock_groq():
             assert call["name"] == "read_file"
             assert call["arguments"]["path"] == "auth.py"
             assert call["arguments"]["start_line"] == 1
+
+def test_grep_tool_schema():
+    assert GREP_TOOL["type"] == "function"
+    assert GREP_TOOL["function"]["name"] == "grep"
+    params = GREP_TOOL["function"]["parameters"]
+    assert "pattern" in params["properties"]
+    assert "pattern" in params["required"]
+    assert "path" in params["properties"]
+    assert "max_matches" in params["properties"]
+    assert GREP_TOOL in AVAILABLE_TOOLS
+
+def test_grep_basic():
+    result = grep("create_access_token", repo_path=SAMPLE_REPO)
+    assert "auth.py:" in result
+    assert "def create_access_token" in result
+
+def test_grep_scoped_path():
+    result = grep("post", path="models", repo_path=SAMPLE_REPO)
+    assert "models/post.py:" in result
+
+def test_grep_no_matches():
+    result = grep("xyz_non_existent_token_12345", repo_path=SAMPLE_REPO)
+    assert "No matches found for pattern" in result
+
+def test_grep_invalid_regex():
+    result = grep("[unclosed_regex_bracket", repo_path=SAMPLE_REPO)
+    assert "Error: Invalid regex pattern" in result
+
+def test_grep_sandbox_escape():
+    result = grep("root", path="../../etc", repo_path=SAMPLE_REPO)
+    assert "Error: Access denied" in result
+
+def test_grep_max_matches_capping():
+    # Search for a common letter 'e' with max_matches=2
+    result = grep("def", repo_path=SAMPLE_REPO, max_matches=2)
+    lines = [l for l in result.split("\n") if l and not l.startswith("[")]
+    assert len(lines) <= 2
+    assert "Output capped at 2 matches" in result
+
+def test_execute_tool_call_grep():
+    result = execute_tool_call("grep", {"pattern": "SECRET_KEY"}, repo_path=SAMPLE_REPO)
+    assert "auth.py:" in result
+    assert "SECRET_KEY" in result
+
+def test_request_tool_call_grep_heuristic():
+    call = request_tool_call("grep 'SECRET_KEY'", repo_path=SAMPLE_REPO)
+    assert call is not None
+    assert call["name"] == "grep"
+    assert call["arguments"]["pattern"] == "SECRET_KEY"
+
+    call2 = request_tool_call("where is password", repo_path=SAMPLE_REPO)
+    assert call2 is not None
+    assert call2["name"] == "grep"
+    assert call2["arguments"]["pattern"] == "password"
